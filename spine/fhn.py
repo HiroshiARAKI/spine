@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 
 
 class FitzHughNagumo:
-    """ Not implemented yet """
     def __init__(self, time, dt, a=0.7, b=0.8, c=10):
         """
         Initialize Neuron parameters
@@ -52,6 +51,25 @@ class FitzHughNagumo:
     def dv(self, u, v):
         return (u - self.b * v + self.a) * self.dt
 
+    def plot_v(self, save=False, filename='fhn.png', **kwargs):
+        """
+        plot membrane potential
+        :param save:
+        :param filename:
+        :param kwargs:
+        :return:
+        """
+        x = np.arange(0, self.time, self.dt)
+        plt.title('FitzHugh-Nagumo Neuron model Simulation')
+        plt.plot(x, self.monitor['v'], label='v: recovery variable')
+        plt.plot(x, self.monitor['u'], label='u: membrane potential')
+        plt.xlabel('time [ms]')
+        if not save:
+            plt.show()
+        else:
+            plt.savefig(filename, dpi=kwargs.get('dpi', 150))
+        plt.close()
+
 
 if __name__ == '__main__':
     # init experimental time and time-step
@@ -77,7 +95,6 @@ if __name__ == '__main__':
     plt.subplot(2, 1, 2)
     plt.plot(x, v, label='v: recovery variable')
     plt.plot(x, u, label='u: membrane potential')
-    plt.ylabel('V [mV]')
     plt.xlabel('time [ms]')
 
     plt.legend()
