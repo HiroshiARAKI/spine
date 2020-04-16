@@ -19,7 +19,11 @@ $ python hh.py
 ![hh](img/hh_1.png)
 
 ### FitzHugh-Nagumo model
-in preparation
+```bash
+$ cd spine
+$ python fhn.py
+```
+![fhn](img/fhn.png)
 
 ## Example
 ```python
