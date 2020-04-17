@@ -1,8 +1,7 @@
 # SPINE: Spiking Neuron simulator
 ![version](https://img.shields.io/badge/version-1.0-blue.svg?style=flat)  
   
-![spine](img/spine.png)
-
+<p align="center"><img width="40%" src="img/spine.png"/></p>
   
 SPINE is a simple Spiking Neuron simulator.  
 [http://spine.hirlab.net](http://spine.hirlab.net) (japanese docs)
