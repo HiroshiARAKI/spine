@@ -1,7 +1,11 @@
 # SPINE: Spiking Neuron simulator
-![version](https://img.shields.io/badge/version-beta-blue.svg?style=flat)  
+![version](https://img.shields.io/badge/version-1.0-blue.svg?style=flat)  
   
-SPINE is a simple Spiking Neuron simulator.
+![spine](img/spine.png)
+
+  
+SPINE is a simple Spiking Neuron simulator.  
+[http://spine.hirlab.net](http://spine.hirlab.net) (japanese docs)
  
 ## Line-up
 ### LIF: Leaky integrate-and-fire model

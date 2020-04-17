@@ -7,7 +7,9 @@ import matplotlib.pyplot as plt
 
 
 class HodgkinHuxley:
-    def __init__(self, time, dt, rest=-65., Cm=1.0, gNa=120., gK=36., gl=0.3, ENa=50., EK=-77., El=-54.387):
+    def __init__(self, time, dt, rest=-65.,
+                 Cm=1.0, gNa=120., gK=36., gl=0.3, ENa=50., EK=-77., El=-54.387,
+                 n=0.32, m=0.05, h=0.6):
         """
         Initialize Neuron parameters
         :param time: experimental time
@@ -20,6 +22,9 @@ class HodgkinHuxley:
         :param ENa:  Na+ equilibrium potential
         :param EK:   K+ equilibrium potential
         :param El:   other (Cl) equilibrium potentials
+        :param n:    Conductance param
+        :param m:    Conductance param
+        :param h:    Conductance param
         """
         self.time = time
         self.dt = dt
@@ -31,6 +36,9 @@ class HodgkinHuxley:
         self.ENa = ENa
         self.EK = EK
         self.El = El
+        self.n = n
+        self.m = m
+        self.h = h
         self.monitor = {}
 
     def calc_v(self, i):
@@ -38,9 +46,9 @@ class HodgkinHuxley:
 
         # initialize parameters
         v = self.rest
-        n = 0.32
-        m = 0.05
-        h = 0.6
+        n = self.n
+        m = self.m
+        h = self.h
 
         v_monitor = []
         n_monitor = []
