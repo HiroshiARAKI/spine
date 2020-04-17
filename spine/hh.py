@@ -98,7 +98,7 @@ class HodgkinHuxley:
     def alpha_n(self, v):
         return 0.01 * (10 - (v - self.rest)) / (np.exp((10 - (v - self.rest))/10) - 1)
 
-    def alpha_m(self, v):  # ? 0.1 -> 0.01だとうまくいく
+    def alpha_m(self, v):
         return 0.1 * (25 - (v - self.rest)) / (np.exp((25 - (v - self.rest))/10) - 1)
 
     def alpha_h(self, v):
