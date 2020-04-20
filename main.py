@@ -1,16 +1,33 @@
 """ Example code """
-
-from spine import HodgkinHuxley
+from spine import Layer
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
+    time = 200
+    dt = 0.01
 
-    neu = HodgkinHuxley(time=100, dt=0.01)
+    # Construct a layer
+    layer = Layer(n=10, model='hh', time=time, dt=dt)
 
-    input_data = np.sin(0.5 * np.arange(0, neu.time, neu.dt))
-    input_data = np.where(input_data > 0, 20, -5) + 10 * np.random.rand(int(neu.time / neu.dt))
+    # Random Square waves as input data
+    input_data = [
+        np.where(np.sin(np.random.rand() * np.arange(0, time, dt) + o) > 0, 20, -5) for o in range(10)
+    ]
 
-    neu.calc_v(input_data)
+    input_data = np.array(input_data)
 
-    neu.plot_monitor(save=True, filename='img/hh_2.png')
+    # calc membrane potentials
+    v = layer.calc_v(input_data)
+
+    # plot
+    for i, d in enumerate(v):
+        plt.subplot(10, 1, i+1)
+        plt.plot(np.arange(0, time, dt), d)
+        plt.ylabel(i)
+
+    plt.xlabel('time [ms]')
+    plt.show()
+
+

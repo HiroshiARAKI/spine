@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 class FitzHughNagumo:
-    def __init__(self, time, dt, a=0.7, b=0.8, c=10):
+    def __init__(self, time, dt, a=0.7, b=0.8, c=10, **kwargs):
         """
         Initialize Neuron parameters
         :param time:
@@ -18,9 +18,9 @@ class FitzHughNagumo:
         """
         self.time = time
         self.dt = dt
-        self.a = a
-        self.b = b
-        self.c = c
+        self.a = kwargs.get('a', a)
+        self.b = kwargs.get('b', b)
+        self.c = kwargs.get('c', c)
         self.monitor = {}
 
     def calc_v(self, i, v0=0, u0=0):

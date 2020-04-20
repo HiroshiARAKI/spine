@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 class HodgkinHuxley:
     def __init__(self, time, dt, rest=-65.,
                  Cm=1.0, gNa=120., gK=36., gl=0.3, ENa=50., EK=-77., El=-54.387,
-                 n=0.32, m=0.05, h=0.6):
+                 n=0.32, m=0.05, h=0.6, **kwargs):
         """
         Initialize Neuron parameters
         :param time: experimental time
@@ -28,17 +28,17 @@ class HodgkinHuxley:
         """
         self.time = time
         self.dt = dt
-        self.rest = rest
-        self.Cm = Cm
-        self.gNa = gNa
-        self.gK = gK
-        self.gl = gl
-        self.ENa = ENa
-        self.EK = EK
-        self.El = El
-        self.n = n
-        self.m = m
-        self.h = h
+        self.rest = kwargs.get('rest', rest)
+        self.Cm = kwargs.get('Cm', Cm)
+        self.gNa = kwargs.get('gNa', gNa)
+        self.gK = kwargs.get('gK', gK)
+        self.gl = kwargs.get('gl', gl)
+        self.ENa = kwargs.get('ENa', ENa)
+        self.EK = kwargs.get('EK', EK)
+        self.El = kwargs.get('El', El)
+        self.n = kwargs.get('n', n)
+        self.m = kwargs.get('m', m)
+        self.h = kwargs.get('h', h)
         self.monitor = {}
 
     def calc_v(self, i):

@@ -10,3 +10,5 @@ Copyright(c) HiroshiARAKI all rights reserved.
 from .lif import LIF
 from .hh import HodgkinHuxley
 from .fhn import FitzHughNagumo
+
+from .layer import Layer

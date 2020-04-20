@@ -12,7 +12,7 @@ def read_requirements():
 
 setup(
     name='spine',
-    version='1.0',
+    version='1.1',
     description='SPINE is a simple Spiking Neuron simulator',
     long_description='README.md',
     author='Hiroshi ARAKI',

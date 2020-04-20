@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 class LIF:
-    def __init__(self, time: int, dt: float = 1.0, rest=-65, th=-40, ref=3, tc_decay=100):
+    def __init__(self, time: int, dt: float = 1.0, rest=-65, th=-40, ref=3, tc_decay=100, **kwargs):
         """
         Initialize Neuron parameters
         :param time:      experimental time
@@ -19,10 +19,10 @@ class LIF:
         """
         self.time = time
         self.dt = dt
-        self.rest = rest
-        self.th = th
-        self.ref = ref
-        self.tc_decay = tc_decay
+        self.rest = kwargs.get('rest', rest)
+        self.th = kwargs.get('th', th)
+        self.ref = kwargs.get('ref', ref)
+        self.tc_decay = kwargs.get('tc_decay', tc_decay)
         self.monitor = {}
 
     def calc_v(self, i):
@@ -39,10 +39,10 @@ class LIF:
 
         # Core of LIF
         for t in range(time):
-            dv = ((dt * t) > (tlast + self.ref)) * (-v + self.rest + i[t]) / self.tc_decay  # 微小膜電位増加量
-            v = v + dt * dv  # 膜電位を計算
+            dv = ((self.dt * t) > (tlast + self.ref)) * (-v + self.rest + i[t]) / self.tc_decay  # 微小膜電位増加量
+            v = v + self.dt * dv  # 膜電位を計算
 
-            tlast = tlast + (dt * t - tlast) * (v >= self.th)  # 発火したら発火時刻を記録
+            tlast = tlast + (self.dt * t - tlast) * (v >= self.th)  # 発火したら発火時刻を記録
             v = v + (vpeak - v) * (v >= self.th)  # 発火したら膜電位をピークへ
 
             v_monitor.append(v)
@@ -54,7 +54,7 @@ class LIF:
         self.monitor['s'] = spikes
         self.monitor['v'] = v_monitor
 
-        return spikes, v_monitor
+        return v_monitor, spikes
 
     def plot_v(self, save=False, filename='lif.png', **kwargs):
         """
