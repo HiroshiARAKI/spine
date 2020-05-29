@@ -15,13 +15,14 @@ class PoissonSpike:
         :param dt:
         :param max_freq:
         """
-        self.data = np.array(data).reshape(-1)
+        data = np.array(data).reshape(-1)
+        self.data = (data - np.min(data.min())) / (np.max(data) - np.min(data))
         self.time = time
         self.dt = dt
 
         self.max_freq = max_freq
         self.freq_data = self.data * max_freq
-        self.norm_data = 1000. / self.freq_data
+        self.norm_data = 1000. / (self.freq_data + 1e-10)
 
         spikes = [
             np.cumsum(np.random.poisson(cell, (int(self.time / cell + 1))))
