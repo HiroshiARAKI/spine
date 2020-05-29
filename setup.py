@@ -10,9 +10,17 @@ def read_requirements():
     return requirements
 
 
+here = os.path.dirname(os.path.abspath(__file__))
+version = next((line.split('=')[1].strip().replace("'", '')
+                for line in open(os.path.join(here,
+                                              'spine',
+                                              '__init__.py'))
+                if line.startswith('__version__ = ')),
+               '0.0.dev0')
+
 setup(
     name='spine',
-    version='1.1',
+    version=version,
     description='SPINE is a simple Spiking Neuron simulator',
     long_description='README.md',
     author='Hiroshi ARAKI',

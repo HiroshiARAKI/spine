@@ -1,10 +1,11 @@
 # SPINE: Spiking Neuron simulator
-![version](https://img.shields.io/badge/version-1.1-blue.svg?style=flat)  
+![version](https://img.shields.io/badge/version-1.2-blue.svg?style=flat)  
   
 <p align="center"><img width="40%" src="img/spine.png"/></p>
   
 SPINE is a simple Spiking Neuron simulator.  
-[http://spine.hirlab.net](http://spine.hirlab.net) (japanese docs)
+[http://spine.hirlab.net](http://spine.hirlab.net) (japanese docs)  
+*(2020.05.29 update: Added Poisson spike generator)*
  
 ## Line-up
 ### LIF: Leaky integrate-and-fire model
@@ -118,6 +119,18 @@ if __name__ == '__main__':
 
 ```
 ![layer2](img/layer_hh.png)
+
+## generate Poisson Spike train
+```python
+from spine import PoissonSpike
+import numpy as np
+import matplotlib.pyplot as plt
+
+ps = PoissonSpike(np.random.random((10, 10)))
+ps.plot_spikes()
+plt.show()
+```
+![poisson](img/poisson.png)
 
 ## LICENSE
 [MIT LICENSE](LICENSE.txt)  
