@@ -12,11 +12,11 @@ if __name__ == '__main__':
 
     # Input data
     spikes = [np.where(np.random.random(time) > 0.996, 1, 0)
-              for _ in range(20)]
+              for _ in range(10)]
     spikes = np.array(spikes)
 
     # random weights whose size is the same as spikes
-    weights = np.random.random(20) + 20.0
+    weights = np.random.random(10) + 5.0
 
     neu = LIF(duration, dt)
     v, s, f = neu.calc_v((spikes, weights))

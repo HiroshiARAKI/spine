@@ -55,10 +55,7 @@ class LIF(Neuron):
         time = int(self.time / self.dt)
 
         data = np.sum(data, 0)
-        data = np.convolve(data, self.kernel(np.arange(0, self.time)), 'same')[:time]
-        # plt.plot(data)
-        # plt.show()
-        # exit()
+        data = np.convolve(data, self.kernel(np.arange(0, self.time, self.dt)), )[0:time]
 
         # initialize
         f_last = 0  # last firing time
