@@ -6,14 +6,21 @@
   
 SPINE is a simple Spiking Neuron simulator.  
 [http://spine.hirlab.net](http://spine.hirlab.net) (japanese docs)  
-*(2020.06.12 update: Added Double Exponential LIF and a plotting function)*
+ (2020.06.12 update: Added Double Exponential LIF and a plotting function)*
  
 ## Line-up
 ### LIF: Leaky integrate-and-fire model
-```shell script
-$ python lif_sample.py
-```
-![lif](img/lif_1.png)
+1. Single Exponential
+    ```shell script
+    $ python lif_sample.py
+    ```
+    ![lif](img/slif.png)
+
+2. Double Exponential
+    ```shell script
+    $ python dlif_sample.py
+    ```
+    ![dlif](img/dlif.png)
 
 ### Hodgkin-Huxley model
 ```shell script
@@ -80,12 +87,6 @@ if __name__ == '__main__':
 
 ```
 ![layer1](img/layer_lif.png)
-
-## new: Double Exponential LIF model
-```shell script
-$ python dlif_sample.py
-```
-![dlif](img/dlif.png)
 
 ## Generate Poisson Spike train
 ```python

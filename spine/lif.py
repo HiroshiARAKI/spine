@@ -20,6 +20,7 @@ class LIF(Neuron):
                  th=-40,
                  ref=3,
                  tc_decay=100,
+                 tau=20,
                  **kwargs):
         """
         Initialize Neuron parameters
@@ -29,21 +30,35 @@ class LIF(Neuron):
         :param th:        threshold
         :param ref:       refractory period
         :param tc_decay:  time constance
+        :param tau:       single exponential decay
         """
         super().__init__(time, dt)
         self.rest = kwargs.get('rest', rest)
         self.th = kwargs.get('th', th)
         self.ref = kwargs.get('ref', ref)
         self.tc_decay = kwargs.get('tc_decay', tc_decay)
+        self.tau = kwargs.get('tau', tau)
         self.monitor = {}
 
     def calc_v(self, data):
         """
         Calculate Membrane Voltage
-        :param data: as input current
+        :param data: tuple(spikes[], weight[])
         :return:
         """
+        spikes = np.array(data[0])
+        weights = np.array(data[1])
+        data = [
+            spikes[i] * weights[i]
+            for i in range(weights.size)
+        ]
         time = int(self.time / self.dt)
+
+        data = np.sum(data, 0)
+        data = np.convolve(data, self.kernel(np.arange(0, self.time)), 'same')[:time]
+        # plt.plot(data)
+        # plt.show()
+        # exit()
 
         # initialize
         f_last = 0  # last firing time
@@ -55,7 +70,7 @@ class LIF(Neuron):
 
         # Core of LIF
         for t in range(time):
-            dv = ((self.dt * t) > (f_last + self.ref)) * (-v + self.rest + data[t]) / self.tc_decay  # 微小膜電位増加量
+            dv = ((self.dt * t) > (f_last + self.ref)) * (-v + self.rest + data[t]) / self.tc_decay
             v = v + self.dt * dv  # calc voltage
 
             f_last = f_last + (self.dt * t - f_last) * (v >= self.th)  # if fires, memory the firing time
@@ -69,8 +84,15 @@ class LIF(Neuron):
 
         self.monitor['s'] = spikes
         self.monitor['v'] = v_monitor
+        self.monitor['f'] = np.arange(0, self.time, self.dt)[v >= self.th],  # real firing times
 
-        return v_monitor, spikes
+        return v_monitor, spikes, self.monitor['f']
+
+    def kernel(self, t):
+        """ Kernel: single exponential synaptic filter """
+        row_k = np.exp(-t/self.tau)
+        v0 = 1. / np.max(row_k)
+        return v0 * row_k
 
     def plot_v(self, save=False, filename='lif.png', **kwargs):
         """
@@ -124,7 +146,6 @@ class DLIF(LIF):
     def calc_v(self, data):
         """
         Calculate Membrane Voltage
-        but this calculation is not proper because of not considering the refractory period.
         :param data: tuple(spikes[], weight[])
         :return membrane voltage, output spikes, firing times:
         """

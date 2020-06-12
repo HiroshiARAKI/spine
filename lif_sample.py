@@ -1,4 +1,4 @@
-from spine import LIF
+from spine import LIF, plot_spike_scatter
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,31 +11,28 @@ if __name__ == '__main__':
     time = int(duration / dt)
 
     # Input data
-    input_data_1 = 10 * np.sin(0.1 * np.arange(0, duration, dt)) + 50
-    input_data_2 = -10 * np.cos(0.05 * np.arange(0, duration, dt)) - 10
+    spikes = [np.where(np.random.random(time) > 0.996, 1, 0)
+              for _ in range(20)]
+    spikes = np.array(spikes)
 
-    # 足し合わせ
-    input_data = input_data_1 + input_data_2
+    # random weights whose size is the same as spikes
+    weights = np.random.random(20) + 20.0
 
     neu = LIF(duration, dt)
-    spikes, voltage = neu.calc_v(input_data)
+    v, s, f = neu.calc_v((spikes, weights))
 
     # Plot
-    plt.subplot(2, 2, 1)
-    plt.ylabel('Input 1')
-    plt.plot(np.arange(0, duration, dt), input_data_1)
+    t = np.arange(0, duration, dt)
 
-    plt.subplot(2, 2, 2)
-    plt.ylabel('Input 2')
-    plt.plot(np.arange(0, duration, dt), input_data_2)
+    plt.subplot(2, 1, 1)
+    plot_spike_scatter(spikes, duration, dt, title='input spike trains', xlabel=None)
 
-    plt.subplot(2, 2, 3)
-    plt.ylabel('Membrane Voltage')
+    plt.subplot(2, 1, 2)
+    plt.plot(t, v)
+    plt.plot(t, np.full_like(t, neu.th), linestyle='dashed')
+    plt.ylabel('Membrane Voltage [mV]')
     plt.xlabel('time [ms]')
-    plt.plot(np.arange(0, duration, dt), voltage)
+    plt.xlim(0, duration)
 
-    plt.subplot(2, 2, 4)
-    plt.ylabel('Output')
-    plt.xlabel('time [ms]')
-    plt.plot(np.arange(0, duration, dt), spikes)
     plt.show()
+
