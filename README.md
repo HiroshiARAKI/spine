@@ -1,31 +1,29 @@
 # SPINE: Spiking Neuron simulator
-![version](https://img.shields.io/badge/version-1.2-blue.svg?style=flat)  
+![python](https://img.shields.io/badge/python-3.x-blueviolet.svg?style=flat)
+![version](https://img.shields.io/badge/version-1.3-blue.svg?style=flat)  
   
 <p align="center"><img width="50%" src="img/spine.png"/></p>
   
 SPINE is a simple Spiking Neuron simulator.  
 [http://spine.hirlab.net](http://spine.hirlab.net) (japanese docs)  
-*(2020.05.29 update: Added Poisson spike generator)*
+*(2020.06.12 update: Added Double Exponential LIF and a plotting function)*
  
 ## Line-up
 ### LIF: Leaky integrate-and-fire model
-```bash
-$ cd spine
-$ python lif.py
+```shell script
+$ python lif_sample.py
 ```
 ![lif](img/lif_1.png)
 
 ### Hodgkin-Huxley model
-```bash
-$ cd spine
-$ python hh.py
+```shell script
+$ python hh_sample.py
 ```
 ![hh](img/hh_1.png)
 
 ### FitzHugh-Nagumo model
-```bash
-$ cd spine
-$ python fhn.py
+```shell script
+$ python fhn_sample.py
 ```
 ![fhn](img/fhn.png)
 
@@ -82,45 +80,14 @@ if __name__ == '__main__':
 
 ```
 ![layer1](img/layer_lif.png)
-  
 
-```python
-# Hodgkin-Huxley
-from spine import Layer
-import numpy as np
-import matplotlib.pyplot as plt
-
-
-if __name__ == '__main__':
-    time = 200
-    dt = 0.01
-
-    # Construct a layer
-    layer = Layer(n=10, model='hh', time=time, dt=dt)
-
-    # Random Square waves as input data
-    input_data = [
-        np.where(np.sin(np.random.rand() * np.arange(0, time, dt) + o) > 0, 20, -5) for o in range(10)
-    ]
-
-    input_data = np.array(input_data)
-    
-    # calc membrane potentials
-    v = layer.calc_v(input_data)
-
-    # plot
-    for i, d in enumerate(v):
-        plt.subplot(10, 1, i+1)
-        plt.plot(np.arange(0, time, dt), d)
-        plt.ylabel(i)
-
-    plt.xlabel('time [ms]')
-    plt.show()
-
+## new: Double Exponential LIF model
+```shell script
+$ python dlif_sample.py
 ```
-![layer2](img/layer_hh.png)
+![dlif](img/dlif.png)
 
-## generate Poisson Spike train
+## Generate Poisson Spike train
 ```python
 from spine import PoissonSpike
 import numpy as np

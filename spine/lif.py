@@ -5,9 +5,22 @@ Copyright(c) HiroshiARAKI
 import numpy as np
 import matplotlib.pyplot as plt
 
+from .neuron import Neuron
 
-class LIF:
-    def __init__(self, time: int, dt: float = 1.0, rest=-65, th=-40, ref=3, tc_decay=100, **kwargs):
+
+class LIF(Neuron):
+    """
+    Single Exponential LIF model
+    """
+
+    def __init__(self,
+                 time: int,
+                 dt: float = 1.0,
+                 rest=-65,
+                 th=-40,
+                 ref=3,
+                 tc_decay=100,
+                 **kwargs):
         """
         Initialize Neuron parameters
         :param time:      experimental time
@@ -17,39 +30,42 @@ class LIF:
         :param ref:       refractory period
         :param tc_decay:  time constance
         """
-        self.time = time
-        self.dt = dt
+        super().__init__(time, dt)
         self.rest = kwargs.get('rest', rest)
         self.th = kwargs.get('th', th)
         self.ref = kwargs.get('ref', ref)
         self.tc_decay = kwargs.get('tc_decay', tc_decay)
         self.monitor = {}
 
-    def calc_v(self, i):
-        """ simple LIF neuron """
+    def calc_v(self, data):
+        """
+        Calculate Membrane Voltage
+        :param data: as input current
+        :return:
+        """
         time = int(self.time / self.dt)
 
         # initialize
-        tlast = 0  # 最後に発火した時刻
-        vpeak = 20  # 膜電位のピーク(最大値)
+        f_last = 0  # last firing time
+        vpeak = 20  # the peak of membrane voltage
         spikes = np.zeros(time)
-        v = self.rest  # 静止膜電位
+        v = self.rest  # set to resting voltage
 
         v_monitor = []  # monitor voltage
 
         # Core of LIF
         for t in range(time):
-            dv = ((self.dt * t) > (tlast + self.ref)) * (-v + self.rest + i[t]) / self.tc_decay  # 微小膜電位増加量
-            v = v + self.dt * dv  # 膜電位を計算
+            dv = ((self.dt * t) > (f_last + self.ref)) * (-v + self.rest + data[t]) / self.tc_decay  # 微小膜電位増加量
+            v = v + self.dt * dv  # calc voltage
 
-            tlast = tlast + (self.dt * t - tlast) * (v >= self.th)  # 発火したら発火時刻を記録
-            v = v + (vpeak - v) * (v >= self.th)  # 発火したら膜電位をピークへ
+            f_last = f_last + (self.dt * t - f_last) * (v >= self.th)  # if fires, memory the firing time
+            v = v + (vpeak - v) * (v >= self.th)  # set to peak
 
             v_monitor.append(v)
 
-            spikes[t] = (v >= self.th) * 1  # スパイクをセット
+            spikes[t] = (v >= self.th) * 1  # set to spike
 
-            v = v + (self.rest - v) * (v >= self.th)  # 静止膜電位に戻す
+            v = v + (self.rest - v) * (v >= self.th)  # return to resting voltage
 
         self.monitor['s'] = spikes
         self.monitor['v'] = v_monitor
@@ -76,38 +92,78 @@ class LIF:
         plt.close()
 
 
-if __name__ == '__main__':
-    duration = 500  # ms
-    dt = 0.1  # time step
+class DLIF(LIF):
 
-    time = int(duration / dt)
+    def __init__(self,
+                 time: int,
+                 dt: float = 1.0,
+                 rest=-65,
+                 th=-40,
+                 ref=3,
+                 tc_decay=100,
+                 tau_1: float = 10,
+                 tau_2: float = 2.5,
+                 **kwargs):
+        """
 
-    # Input data
-    input_data_1 = 10 * np.sin(0.1 * np.arange(0, duration, dt)) + 50
-    input_data_2 = -10 * np.cos(0.05 * np.arange(0, duration, dt)) - 10
+        :param time:
+        :param dt:
+        :param rest:
+        :param th:
+        :param ref:
+        :param tc_decay:
+        :param tau_1:
+        :param tau_2:
+        :param kwargs:
+        """
+        super().__init__(time, dt, rest, th, ref, tc_decay, **kwargs)
+        self.tau_1 = tau_1
+        self.tau_2 = tau_2
+        self.monitor = {}
 
-    # 足し合わせ
-    input_data = input_data_1 + input_data_2
+    def calc_v(self, data):
+        """
+        Calculate Membrane Voltage
+        but this calculation is not proper because of not considering the refractory period.
+        :param data: tuple(spikes[], weight[])
+        :return membrane voltage, output spikes, firing times:
+        """
+        spikes = np.array(data[0])
+        weights = np.array(data[1])
 
-    neu = LIF(duration, dt)
-    spikes, voltage = neu.calc_v(input_data)
+        peak = 20  # the peak of membrane voltage
+        f_last = -100  # last firing time
+        t_ref = int(self.ref / self.dt)  # refractory period [x dt ms]
 
-    # Plot
-    plt.subplot(2, 2, 1)
-    plt.ylabel('Input 1')
-    plt.plot(np.arange(0, duration, dt), input_data_1)
+        v = np.zeros(int(self.time / self.dt)) + self.rest  # all membrane voltage set to resting vol.
 
-    plt.subplot(2, 2, 2)
-    plt.ylabel('Input 2')
-    plt.plot(np.arange(0, duration, dt), input_data_2)
+        input_spikes = np.array([
+            spikes[i] * weights[i]
+            for i in range(weights.size)
+        ])
+        input_spikes = np.sum(input_spikes, 0)
+        for t, s in enumerate(input_spikes):
+            if s:  # if fires,
+                # and be not in refractory period, calculate voltage
+                v[t:] += (t > (f_last + t_ref)) * s * self.kernel(np.arange(0, v[t:].size, 1) * self.dt)
 
-    plt.subplot(2, 2, 3)
-    plt.ylabel('Membrane Voltage')
-    plt.xlabel('time [ms]')
-    plt.plot(np.arange(0, duration, dt), voltage)
+            if v[t] >= self.th:
+                v[t] = peak
+                v[t+1:] = self.rest  # return to resting voltage
+                f_last = t  # memory the firing time
 
-    plt.subplot(2, 2, 4)
-    plt.ylabel('Output')
-    plt.xlabel('time [ms]')
-    plt.plot(np.arange(0, duration, dt), spikes)
-    plt.show()
+        self.monitor = {
+            'v': v,
+            's': [v >= self.th],  # boolean spike trains
+            'f': np.arange(0, self.time, self.dt)[v >= self.th],  # real firing times
+        }
+
+        return v, self.monitor['s'], self.monitor['f']
+
+    def kernel(self, t):
+        """ Kernel: double exponential synaptic filter """
+        row_k = np.exp(-t/self.tau_1) - np.exp(-t/self.tau_2)
+        v0 = 1. / np.max(row_k)
+
+        return v0 * row_k
+

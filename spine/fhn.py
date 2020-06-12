@@ -5,9 +5,21 @@ Copyright(c) HiroshiARAKI
 import numpy as np
 import matplotlib.pyplot as plt
 
+from .neuron import Neuron
 
-class FitzHughNagumo:
-    def __init__(self, time, dt, a=0.7, b=0.8, c=10, **kwargs):
+
+class FitzHughNagumo(Neuron):
+    """
+    FitzHugh-Nagumo neuron model
+    """
+
+    def __init__(self,
+                 time: int,
+                 dt: float = 0.1,
+                 a=0.7,
+                 b=0.8,
+                 c=10,
+                 **kwargs):
         """
         Initialize Neuron parameters
         :param time:
@@ -16,15 +28,20 @@ class FitzHughNagumo:
         :param b:
         :param c:
         """
-        self.time = time
-        self.dt = dt
+        super().__init__(time, dt)
         self.a = kwargs.get('a', a)
         self.b = kwargs.get('b', b)
         self.c = kwargs.get('c', c)
         self.monitor = {}
 
-    def calc_v(self, i, v0=0, u0=0):
-        """ compute membrane potential """
+    def calc_v(self, data, v0=0, u0=0):
+        """
+        Calculate Membrane Voltage
+        :param data: as input current
+        :param v0:
+        :param u0:
+        :return:
+        """
         v_monitor = []
         u_monitor = []
 
@@ -34,7 +51,7 @@ class FitzHughNagumo:
         time = int(self.time / self.dt)
 
         for t in range(time):
-            u += self.du(u, v, i[t])
+            u += self.du(u, v, data[t])
             v += self.dv(u, v)
 
             v_monitor.append(v)
@@ -69,33 +86,3 @@ class FitzHughNagumo:
         else:
             plt.savefig(filename, dpi=kwargs.get('dpi', 150))
         plt.close()
-
-
-if __name__ == '__main__':
-    # init experimental time and time-step
-    time = 100
-    dt = 0.1
-
-    # create Hodgkin-Huxley Neuron
-    neu = FitzHughNagumo(time, dt)
-
-    # Input data (sin curve)
-    input_data = np.sin(0.2 * np.arange(0, time, dt))
-    input_data = np.where(input_data > 0, 0.8, 0.1)
-
-    v, u = neu.calc_v(input_data)
-
-    # plot
-    x = np.arange(0, time, dt)
-    plt.subplot(2, 1, 1)
-    plt.title('FitzHugh-Nagumo Neuron model Simulation')
-    plt.plot(x, input_data)
-    plt.ylabel('input')
-
-    plt.subplot(2, 1, 2)
-    plt.plot(x, v, label='v: recovery variable')
-    plt.plot(x, u, label='u: membrane potential')
-    plt.xlabel('time [ms]')
-
-    plt.legend()
-    plt.show()

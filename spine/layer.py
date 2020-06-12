@@ -73,3 +73,5 @@ class Layer:
 
         return v_monitor
 
+    def __len__(self):
+        return len(self.neurons)
