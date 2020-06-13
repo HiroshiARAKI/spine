@@ -6,7 +6,7 @@
   
 SPINE is a simple Spiking Neuron simulator.  
 [http://spine.hirlab.net](http://spine.hirlab.net) (japanese docs)  
- (2020.06.12 update: Added Double Exponential LIF and a plotting function)*
+ (2020.06.12 update: Added Double Exponential LIF and a plotting function)
  
 ## Line-up
 ### LIF: Leaky integrate-and-fire model

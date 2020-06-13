@@ -1,4 +1,4 @@
-from spine import LIF, plot_spike_scatter
+from spine import LIF, PoissonSpike, plot_spike_scatter
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,10 +10,10 @@ if __name__ == '__main__':
 
     time = int(duration / dt)
 
-    # Input data
-    spikes = [np.where(np.random.random(time) > 0.996, 1, 0)
-              for _ in range(10)]
-    spikes = np.array(spikes)
+    # Input data from Poisson Spike Gen.
+    spikes = PoissonSpike(np.random.random(10),
+                          time=duration,
+                          dt=dt).spikes
 
     # random weights whose size is the same as spikes
     weights = np.random.random(10) + 5.0

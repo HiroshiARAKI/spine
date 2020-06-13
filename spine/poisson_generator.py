@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 class PoissonSpike:
-    def __init__(self, data, time=300, dt=0.1, max_freq=128):
+    def __init__(self, data, time=500, dt=0.1, max_freq=128):
         """
         Generate Poisson spike trains
         :param data:
@@ -24,11 +24,21 @@ class PoissonSpike:
         self.freq_data = self.data * max_freq
         self.norm_data = 1000. / (self.freq_data + 1e-10)
 
-        spikes = [
+        fires = [
             np.cumsum(np.random.poisson(cell, (int(self.time / cell + 1))))
             for cell in self.norm_data
         ]
-        self.spikes = np.array(spikes)
+        self.fires = np.array(fires)
+
+        self.spikes = np.zeros((data.shape[0], int(time/dt)))
+        for s, f in zip(self.spikes, self.fires):
+            f = f[f < time]  # round
+            s[10 * f] = 1    # {0,1} spikes
+
+        self.monitor = {
+            's': self.spikes,
+            'f': self.fires,
+        }
 
     def plot_spikes(self):
         """
@@ -36,7 +46,7 @@ class PoissonSpike:
         :return:
         """
         plt.title('Spike firing timing')
-        for i, s in enumerate(self.spikes):
+        for i, s in enumerate(self.fires):
             plt.scatter(s, [i for _ in range(len(s))], s=1.0, c='tab:blue')
         plt.xlim(0, self.time)
         plt.ylabel('pixel index')

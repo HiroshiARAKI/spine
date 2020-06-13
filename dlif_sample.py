@@ -1,4 +1,4 @@
-from spine import DLIF, plot_spike_scatter
+from spine import DLIF, PoissonSpike, plot_spike_scatter
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,9 +13,9 @@ if __name__ == '__main__':
     neu = DLIF(duration, dt)
 
     # random spike trains
-    spikes = [np.where(np.random.random(time) > 0.996, 1, 0)
-              for _ in range(10)]
-    spikes = np.array(spikes)
+    spikes = PoissonSpike(np.random.random(10),
+                          time=duration,
+                          dt=dt).spikes
 
     # random weights whose size is the same as spikes
     weights = np.random.random(10) + 2.0
