@@ -1,7 +1,3 @@
-"""
-Spike Generator based on Poisson Distribution.
-Copyright(c) HiroshiARAKI
-"""
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -51,9 +47,3 @@ class PoissonSpike:
         plt.xlim(0, self.time)
         plt.ylabel('pixel index')
         plt.xlabel('time [ms]')
-
-
-if __name__ == '__main__':
-    ps = PoissonSpike(np.random.random((10, 10)))
-    ps.plot_spikes()
-    plt.show()

@@ -1,4 +1,5 @@
-from spine import DLIF, PoissonSpike, plot_spike_scatter
+from spine import IF, PoissonSpike
+from spine.tools.plotting import plot_spike_scatter
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,7 +11,10 @@ if __name__ == '__main__':
     time = int(duration / dt)
 
     # create DLIF instance
-    neu = DLIF(duration, dt)
+    neu = IF(duration,
+             dt,
+             k='double',
+             tau=(10, 1.0))
 
     # random spike trains
     spikes = PoissonSpike(np.random.random(10),

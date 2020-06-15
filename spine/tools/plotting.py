@@ -23,7 +23,6 @@ def plot_spike_scatter(spikes, time, dt, **kwargs):
                     s=kwargs.get('s', 10),
                     c=kwargs.get('c', 'tab:blue'))
     plt.xlim(0, time)
-    plt.yticks([i for i in range(len(firing_times))])
 
     if kwargs.get('xlabel', '') is not None:
         plt.xlabel('time [ms]')

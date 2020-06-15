@@ -1,4 +1,5 @@
-from spine import LIF, PoissonSpike, plot_spike_scatter
+from spine import LIF, PoissonSpike
+from spine.tools.plotting import plot_spike_scatter
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,7 +19,12 @@ if __name__ == '__main__':
     # random weights whose size is the same as spikes
     weights = np.random.random(10) + 5.0
 
-    neu = LIF(duration, dt)
+    neu = LIF(duration,
+              dt,
+              k='double',  # use double exponential filter
+              tau=(10, 2)  # time constants of filter
+              )
+
     v, s, f = neu.calc_v((spikes, weights))
 
     # Plot

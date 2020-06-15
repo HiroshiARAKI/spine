@@ -6,11 +6,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from .neuron import Neuron
+from ..tools import kernel
 
 
 class LIF(Neuron):
     """
-    Single Exponential LIF model
+    LIF: leaky integrate-and-fire model
     """
 
     def __init__(self,
@@ -20,7 +21,8 @@ class LIF(Neuron):
                  th=-40,
                  ref=3,
                  tc_decay=100,
-                 tau=20,
+                 k='single',
+                 tau: tuple = (20, ),
                  **kwargs):
         """
         Initialize Neuron parameters
@@ -30,15 +32,23 @@ class LIF(Neuron):
         :param th:        threshold
         :param ref:       refractory period
         :param tc_decay:  time constance
-        :param tau:       single exponential decay
+        :param k:         kernel {'single', 'double'}
+        :param tau:       exponential decays as tuple(tau_1 ,tau_2) or float
         """
         super().__init__(time, dt)
+
+        if k not in ['single', 'double']:
+            print('The kernel is selected "single".')
+            k = 'single'
+
         self.rest = kwargs.get('rest', rest)
         self.th = kwargs.get('th', th)
         self.ref = kwargs.get('ref', ref)
         self.tc_decay = kwargs.get('tc_decay', tc_decay)
-        self.tau = kwargs.get('tau', tau)
         self.monitor = {}
+
+        self.kernel = kernel[kwargs.get('k', k)]  # default: single exp filter
+        self.tau = tau if type(tau) is tuple else (tau, )
 
     def calc_v(self, data):
         """
@@ -55,7 +65,10 @@ class LIF(Neuron):
         time = int(self.time / self.dt)
 
         data = np.sum(data, 0)
-        data = np.convolve(data, self.kernel(np.arange(0, self.time, self.dt)), )[0:time]
+        data = np.convolve(data,
+                           self.kernel(np.arange(0, self.time, self.dt),
+                                       self.tau)
+                           )[0:time]
 
         # initialize
         f_last = 0  # last firing time
@@ -85,12 +98,6 @@ class LIF(Neuron):
 
         return v_monitor, spikes, self.monitor['f']
 
-    def kernel(self, t):
-        """ Kernel: single exponential synaptic filter """
-        row_k = np.exp(-t/self.tau)
-        v0 = 1. / np.max(row_k)
-        return v0 * row_k
-
     def plot_v(self, save=False, filename='lif.png', **kwargs):
         """
         plot membrane potential
@@ -111,34 +118,38 @@ class LIF(Neuron):
         plt.close()
 
 
-class DLIF(LIF):
-
+class IF(LIF):
+    """
+    IF: integrate-and-fire model
+    """
     def __init__(self,
                  time: int,
                  dt: float = 1.0,
                  rest=-65,
                  th=-40,
                  ref=3,
-                 tc_decay=100,
-                 tau_1: float = 10,
-                 tau_2: float = 2.5,
+                 k='single',
+                 tau: tuple = (20, ),
                  **kwargs):
         """
-
+        Initialize Neuron parameters
         :param time:
         :param dt:
         :param rest:
         :param th:
         :param ref:
-        :param tc_decay:
-        :param tau_1:
-        :param tau_2:
+        :param k:
+        :param tau:
         :param kwargs:
         """
-        super().__init__(time, dt, rest, th, ref, tc_decay, **kwargs)
-        self.tau_1 = tau_1
-        self.tau_2 = tau_2
-        self.monitor = {}
+        super().__init__(time=time,
+                         dt=dt,
+                         rest=rest,
+                         th=th,
+                         ref=ref,
+                         k=k,
+                         tau=tau,
+                         **kwargs)
 
     def calc_v(self, data):
         """
@@ -163,7 +174,7 @@ class DLIF(LIF):
         for t, s in enumerate(input_spikes):
             if s:  # if fires,
                 # and be not in refractory period, calculate voltage
-                v[t:] += (t > (f_last + t_ref)) * s * self.kernel(np.arange(0, v[t:].size, 1) * self.dt)
+                v[t:] += (t > (f_last + t_ref)) * s * self.kernel(np.arange(0, v[t:].size, 1) * self.dt, self.tau)
 
             if v[t] >= self.th:
                 v[t] = peak
@@ -177,11 +188,4 @@ class DLIF(LIF):
         }
 
         return v, self.monitor['s'], self.monitor['f']
-
-    def kernel(self, t):
-        """ Kernel: double exponential synaptic filter """
-        row_k = np.exp(-t/self.tau_1) - np.exp(-t/self.tau_2)
-        v0 = 1. / np.max(row_k)
-
-        return v0 * row_k
 
