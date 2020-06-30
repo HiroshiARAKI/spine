@@ -21,15 +21,17 @@ class PoissonSpike:
         self.norm_data = 1000. / (self.freq_data + 1e-10)
 
         fires = [
-            np.cumsum(np.random.poisson(cell, (int(self.time / cell + 1))))
+            np.cumsum(np.random.poisson(cell / dt,
+                                        (int(time / cell + 1)))
+                      )
             for cell in self.norm_data
         ]
         self.fires = np.array(fires)
 
         self.spikes = np.zeros((data.shape[0], int(time/dt)))
         for s, f in zip(self.spikes, self.fires):
-            f = f[f < time]  # round
-            s[10 * f] = 1    # {0,1} spikes
+            f = f[f < int(time/dt)]  # round
+            s[f] = 1    # {0,1} spikes
 
         self.monitor = {
             's': self.spikes,

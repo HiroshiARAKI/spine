@@ -16,4 +16,4 @@ from spine.neurons import (
 from .tools import PoissonSpike
 
 
-__version__ = '2.0'
+__version__ = '2.1'

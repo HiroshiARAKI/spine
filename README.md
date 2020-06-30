@@ -1,6 +1,6 @@
 # SPINE: Spiking Neuron simulator
 ![python](https://img.shields.io/badge/python-3.x-blueviolet.svg?style=flat)
-![version](https://img.shields.io/badge/version-2.0-blue.svg?style=flat)  
+![version](https://img.shields.io/badge/version-2.1-blue.svg?style=flat)  
   
 <p align="center"><img width="50%" src="img/spine.png"/></p>
   
