@@ -14,6 +14,6 @@ from spine.neurons import (
     IF,
 )
 from .tools import PoissonSpike
+from .tools.random import R, U, N, P  # Random (Distributions) tools
 
-
-__version__ = '2.1'
+__version__ = '2.2'

@@ -1,14 +1,16 @@
 # SPINE: Spiking Neuron simulator
 ![python](https://img.shields.io/badge/python-3.x-blueviolet.svg?style=flat)
-![version](https://img.shields.io/badge/version-2.1-blue.svg?style=flat)  
+![version](https://img.shields.io/badge/version-2.2-blue.svg?style=flat)  
   
 <p align="center"><img width="50%" src="img/spine.png"/></p>
   
 SPINE is a simple Spiking Neuron simulator.  
 Documentation is   
-[http://spine.hirlab.net](http://spine.hirlab.net) (japanese docs)  
+[http://spine.hirlab.net](http://spine.hirlab.net) (Japanese docs)  
 or  
 please refer to `***_sample.py`.
+
+New Release! => [SPINE Web Application](http://spine-web.hirlab.net/) (Japanese)
  
 ## Line-up
 ### IF: integrate-and-fire model
