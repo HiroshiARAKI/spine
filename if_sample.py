@@ -1,5 +1,5 @@
-from spine import IF, PoissonSpike
-from spine.tools.plotting import plot_spike_scatter
+from spine import IF
+from spine.tools import PoissonSpike, plot_spike_scatter
 
 import numpy as np
 import matplotlib.pyplot as plt

@@ -20,15 +20,15 @@ def plot_spike_scatter(spikes, time, dt, **kwargs):
     for i in range(len(spikes)):
         plt.scatter(firing_times[i],
                     [i for _ in firing_times[i]],
-                    s=kwargs.get('s', 10),
+                    s=kwargs.get('s', 5),
                     c=kwargs.get('c', 'tab:blue'))
     plt.xlim(0, time)
 
     if kwargs.get('xlabel', '') is not None:
-        plt.xlabel('time [ms]')
+        plt.xlabel(kwargs.get('xlabel', 'time [ms]'))
 
     if kwargs.get('ylabel', '') is not None:
-        plt.ylabel('neuron index')
+        plt.ylabel(kwargs.get('ylabel', 'neuron index'))
 
     if kwargs.get('title') is not None:
         plt.title(kwargs.get('title', ''))

@@ -80,7 +80,7 @@ class LIF(Neuron):
 
         # Core of LIF
         for t in range(time):
-            dv = ((self.dt * t) > (f_last + self.ref)) * (-v + self.rest + data[t]) / self.tc_decay
+            dv = ((self.dt * t) > (f_last + self.ref)) * (-v + self.rest) / self.tc_decay + data[t]
             v = v + self.dt * dv  # calc voltage
 
             f_last = f_last + (self.dt * t - f_last) * (v >= self.th)  # if fires, memory the firing time

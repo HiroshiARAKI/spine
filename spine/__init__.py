@@ -10,10 +10,12 @@ Copyright(c) HiroshiARAKI all rights reserved.
 from spine.neurons import (
     HodgkinHuxley,
     FitzHughNagumo,
+    Izhikevich,
     LIF,
     IF,
 )
-from .tools import PoissonSpike
-from .tools.random import R, U, N, P  # Random (Distributions) tools
+from . import tools
 
-__version__ = '2.2'
+from .network import Network
+
+__version__ = '3.0'
